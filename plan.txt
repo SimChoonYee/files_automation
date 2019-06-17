@@ -1,0 +1,13 @@
+1) unzip
+2) extract
+3) read config file
+    3.1) create a list fo attributes for config parser to take.
+    Why we need this?
+
+    Each file should have attributes such as:
+    1. path to replace
+    2. filename
+    3. path it exists
+    Where should i put this attributes?
+
+4) update/remove/create
