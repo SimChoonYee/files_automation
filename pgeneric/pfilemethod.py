@@ -50,14 +50,8 @@ class FileMethodClass:
                 elif search_res and file_found == 1:
                     raise ValueError('More than 1 of ', pat, 'only 1 allowed')
 
-                '''
-                if filename.endswith(pat_end) and file_found == 0:
-                    print('Found so @:', dirpath, dirnames, filenames)
-                    file_found = 1
-                    self.so_path = dirpath + "\\" + filename
-                elif filename.endswith(pat_end) and file_found == 1:
-                    raise ValueError('Two .so files are found, only 1 allowed')
-                '''
+        return file_found
+
 
     def read_so_ver(self):
         try:
