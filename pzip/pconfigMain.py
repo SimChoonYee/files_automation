@@ -18,7 +18,7 @@ class ConfigMainClass:
                 "path_used"
             }
 
-            self.method = ConfigMethodsClass()
+
             self.config = ConfigParser(allow_no_value=True)
 
     def config_create_default_section(self, section=None):
