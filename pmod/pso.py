@@ -10,7 +10,7 @@ class SoClass:
         self.fm = FileMethodClass(*args, **kwargs)
         pass
 
-    def find_version(self):
+    def find_so_version(self):
         '''
         *****version_start_2.09.00.71572ENG_version_end*****
         ^\*\*\*\*\*(version_start_)([0-9]{1})(\.)([0-9]{2})(\.)([0-9]{2})(\.)([0-9a-zA-Z]{1,})(_version_end)\*\*\*\*\*$
@@ -26,13 +26,22 @@ class SoClass:
               '\*\*\*\*\*' \
               '$'
 
+        if self.so_path is not None:
+            try:
+                with open(self.so_path, 'rb') as so_file:
+                    # TODO: Continue here
+                    pass
+            except Exception as e:
+                logging.exception('Missing so_file')
+                raise FileNotFoundError
+
     def set_sofile(self,so_path=None):
         if so_path is not None:
-            self.so_path = so_path
-            logging.info('Reading self.so_path: %s', self.so_path)
+            self.so_path = self.fm.set_file_path(so_path)
+            logging.info('SET self.so_path: %s', self.so_path)
         else:
             self.so_path = self.fm.file_path
-            logging.info('Reading self.fm.file_path %s', self.fm.file_path)
+            logging.info('SET self.so_path from self.fm.file_path %s', self.fm.file_path)
 
         if self.so_path:
             pass

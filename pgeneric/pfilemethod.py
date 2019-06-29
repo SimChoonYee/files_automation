@@ -22,7 +22,22 @@ class FileMethodClass:
                 return ""
 
     def set_file_dir(self, filedir):
-        self.filedir = filedir
+        if os.path.isdir(filedir):
+            logging.info('SET file_dir @ %s', filedir)
+            self.filedir = filedir
+            return self.filedir
+        else:
+            logging.error('Dir not exists')
+            raise FileNotFoundError('self.filedir is:', filedir)
+
+    def set_file_path(self, file_path):
+        if os.path.exists(file_path):
+            logging.info('SET file_path @ %s', file_path)
+            self.file_path = file_path
+            return self.file_path
+        else:
+            logging.error('file_path not exists')
+            raise FileNotFoundError('self.file_path is:', file_path)
 
     def check_file_exists_in_dir(self, pat_start=None, pat_end=None):
         '''
@@ -34,13 +49,18 @@ class FileMethodClass:
         None cant concatenate: https://stackoverflow.com/questions/21095654/what-is-a-nonetype-object
         soln: https://stackoverflow.com/questions/3752240/join-string-and-none-string-using-optional-delimiter
         '''
+        if self.filedir is None:
+            # https://stackoverflow.com/questions/28799353/python-giving-filenotfounderror-for-file-name-returned-by-os-listdir
+            raise FileNotFoundError('self.filedir is:', self.filedir)
+
         if pat_start is None and pat_end is None:
             # https://stackoverflow.com/questions/8297526/proper-exception-to-raise-if-none-encountered-as-argument
             raise TypeError('Search pattern cannot be None')
-
         pat_start, pat_end = self.str_if_None(pat_start), self.str_if_None(pat_end)
         pat = pat_start + pat_end
+
         file_found = None
+        logging.info('Searching %s @ %s', pat, self.filedir)
         for dirpath, dirnames, filenames in os.walk(self.filedir):
             for filename in filenames:
                 search_res = re.search(pat, filename)
@@ -52,8 +72,10 @@ class FileMethodClass:
                     raise ValueError('More than 1 of ', pat, 'only 1 allowed')
 
         if file_found == 1:
+            logging.info('Found %s @ %s', pat, self.file_path)
             return self.file_path
         elif file_found == 0:
+            logging.info('$s not found @ %s', pat, self.file_path)
             return None
         else:
             raise ValueError('file_found:',file_found)
