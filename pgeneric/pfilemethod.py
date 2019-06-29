@@ -1,5 +1,6 @@
-import os
-import re
+# import os
+# import re
+from pgeneric.pimport_module import *
 
 class FileMethodClass:
     def __init__(self, *args, filedir=r'C:\automation_testfiles', **kwargs):
@@ -44,13 +45,19 @@ class FileMethodClass:
             for filename in filenames:
                 search_res = re.search(pat, filename)
                 if search_res and file_found is None:
-                    print('Found so @:', dirpath, dirnames, filenames)
+                    logging.debug('Found so @ %s, %s, %s:', dirpath, dirnames, filenames)
                     file_found = 1
                     self.file_path = dirpath + "\\" + filename
                 elif search_res and file_found == 1:
                     raise ValueError('More than 1 of ', pat, 'only 1 allowed')
 
-        return file_found
+        if file_found == 1:
+            return self.file_path
+        elif file_found == 0:
+            return None
+        else:
+            raise ValueError('file_found:',file_found)
+
 
 
     def read_so_ver(self):
