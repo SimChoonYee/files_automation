@@ -4,8 +4,8 @@ import re
 from pgeneric.pfilemethod import FileMethodClass
 
 class SoClass:
-    def __init__(self, *args, sofile=None, **kwargs):
-        self.sofile = sofile
+    def __init__(self, *args, so_path=None, **kwargs):
+        self.so_path = so_path
         self.fm = FileMethodClass(*args, **kwargs)
         pass
 
@@ -25,10 +25,18 @@ class SoClass:
               '\*\*\*\*\*' \
               '$'
 
+    def set_sofile(self,so_path=None):
+        if so_path is not None:
+            try:
+                with open(so)
+        else:
+            print('so_path:',so_path)
+
 
 if __name__ == "__main__":
     so = SoClass()
     so.fm.update()
     so.fm.check_file_exists_in_dir('.so')
+    so.set_sofile(so.fm.file_path)
     print('end of program')
 
