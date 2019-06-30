@@ -5,11 +5,19 @@ import re
 from pgeneric.pimport_module import *
 
 class SoClass:
-    def __init__(self, *args, so_path=None, **kwargs):
-        self.so_path = so_path
-        self.so_version = None
-        self.fm = FileMethodClass(*args, **kwargs)
+    def __init__(self):
+        logging.debug('Creating instance of SoClass, call instance.init to initializate')
         pass
+
+    def init(self, *args, so_path=None, **kwargs):
+        logging.info('INIT:%s', self.__class__.__name__)
+        self.so_path = so_path
+        self.so_name = None
+        self.so_dir = None
+        self.so_search_dir = None
+        self.so_version = None
+        self.fm = FileMethodClass()
+        self.fm.init(*args, **kwargs)
 
     def find_so_version(self):
         '''
@@ -54,7 +62,7 @@ class SoClass:
 
     def set_sofile(self,so_path=None):
         if so_path is not None:
-            self.so_path = self.fm.set_file_path(so_path)
+            self.so_path = self.fm.chk_file_path(so_path)
             logging.info('SET self.so_path: %s', self.so_path)
         else:
             self.so_path = self.fm.file_path
@@ -68,7 +76,10 @@ class SoClass:
 
 if __name__ == "__main__":
     so = SoClass()
-    so.fm.check_file_exists_in_dir('.so')
+    so.init()
+    sofile_dir = r'C:\automation_testfiles'
+    so.fm.chk_file_dir(filedir=sofile_dir)
+    so.fm.search_file_in_dir('.so', filedir=sofile_dir)
     so.set_sofile()
     so.find_so_version()
     print('End of program')

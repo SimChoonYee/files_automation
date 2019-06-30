@@ -17,3 +17,47 @@ Training plan:
 Move forward plan:
 1) Use property now to filter the config https://pythonguide.readthedocs.io/en/latest/python/decorator.html
 
+
+OOP design concept:
+When designing pmod methods:
+pmod:
+i.e. set_sofile in pso:
+pso method shouldnt check the file if it exists,
+instead it is encouraged use FileMethodClass to check
+chk_file_path should use instead
+
+It should check if the sofile exists in that location
+and in FileMethodClass it should set self.file_path
+and returned to SoClass and assign to self.so_path
+(meaning the whole filemethod is pointing to that .so file)
+
+Note: need to be careful when using, we also need that
+
+if exists:
+set both file_path and so_path
+
+if not exists:
+Should it stop the execution?
+depending on the user: if error?
+if you chosen dont stop the execution, we need to program none-checking for all other methods in FileMethodClass before using(complicated, i suppose).
+So, to make it simple, just force the user to input the correct details at the beginning.
+
+For this, i need to add checking on the user's details at the init?
+# concern as init is designed to call once in python, thus i should avoid using init https://stackoverflow.com/questions/2144988/python-multiple-calls-to-init-on-the-same-instance
+instead, i should create:
+method:reset ->All needed variables set to 0/None, works like init
+method:reset_check ->Check if user input is correct, validate the path
+method:reset_set ->Set the values
+Meaning, when there's a new user input, the inputs need to go through these 3 reset method
+Thus, we ensure our data is correct first, before start implemention
+(Of course, we have concern on if the program is running,
+and some user removes a certain files after we have checked during the process,
+it will break the concept, ignore this possibility now as we need to continue to program)
+
+OOP design concept:
+Should let pgeneric as common as possible, meaning, I shouldnt set any FileMethodClass.attribute in it.
+Methods in FileMethodClass should be staticmethod
+Why?
+1) To tackle if the data is stored at FileMethodClass or pmod:SoClass. Now every user-defined data is stored at
+pmod:SoClass
+
