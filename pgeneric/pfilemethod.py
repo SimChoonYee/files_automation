@@ -35,13 +35,22 @@ class FileMethodClass:
 
     def chk_file_path(self, file_path):
         if os.path.exists(file_path):
-            logging.info('SET file_path @ %s', file_path)
+            logging.info('File_path exists @ %s', file_path)
             # self.file_path = file_path
             # return self.file_path
             return file_path
         else:
-            logging.error('file_path not exists')
-            raise FileNotFoundError('self.file_path is:', file_path)
+            logging.error('File_path not exists')
+            raise FileNotFoundError('File_path @:', file_path)
+
+    def return_dir_from_path(self, so_path=None):
+        if so_path is not None:
+            backslash_index = so_path.rfind("\\")
+            so_dir = so_path[:backslash_index]
+            return so_dir
+        else:
+            logging.warning('Cant get so_path as it is %s', so_path)
+            return None
 
     def search_file_in_dir(self, filedir=None, pat_start=None, pat_end=None):
         '''

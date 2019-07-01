@@ -38,7 +38,7 @@ set both file_path and so_path
 
 if not exists:
 Should it stop the execution?
-depending on the user: if error?
+depending on the user: if warning?
 if you chosen dont stop the execution, we need to program none-checking for all other methods in FileMethodClass before using(complicated, i suppose).
 So, to make it simple, just force the user to input the correct details at the beginning.
 
