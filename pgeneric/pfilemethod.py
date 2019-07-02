@@ -97,8 +97,25 @@ class FileMethodClass:
         else:
             raise ValueError('file_found:', file_found)
 
+    def create_folder(self, folder_name=None, num=0):
+        logging.debug('folder_name: %s', folder_name)
+        init_name = 'output'
+        if folder_name is None:
+            init_name = 'output'
+            num = 0
+            folder_name = init_name + str(num)
+
+        # Check if folder exists? do nothing:create it
+        if not os.path.isdir(folder_name):
+            os.makedirs(folder_name)
+            logging.info("Created: %s", folder_name)
+            return folder_name
+        else:
+            num = num + 1
+            folder_name = init_name + str(num)
+            logging.info("Folder:%s exists", folder_name)
+            return self.create_folder(folder_name, num)
 
 if __name__ == "__main__":
     fmobj = FileMethodClass()
-    fmobj.search_file_in_dir('.so')
-    print(fmobj.file_path)
+    fmobj.create_folder()
