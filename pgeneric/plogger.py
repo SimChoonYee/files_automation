@@ -25,7 +25,7 @@ logging.basicConfig(filename='log.log', filemode='w',
                     # handlers=[
                     #     logging.FileHandler("{0}.log".format('log')),
                     #     logging.StreamHandler()],
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 # https://stackoverflow.com/questions/13733552/logger-configuration-to-log-to-file-and-print-to-stdout
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))

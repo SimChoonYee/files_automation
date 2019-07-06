@@ -61,3 +61,13 @@ Why?
 1) To tackle if the data is stored at FileMethodClass or pmod:SoClass. Now every user-defined data is stored at
 pmod:SoClass
 
+
+WJun Idea's of importing:
+add this in init file then you can import at the
+__all__ = [
+    'pfilemethod',
+    'plogger'
+]
+
+from pgeneric import *
+pfilemethod.

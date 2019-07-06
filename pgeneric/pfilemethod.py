@@ -5,13 +5,27 @@ from pgeneric.pimport_module import *
 
 class FileMethodClass:
     def __init__(self):
-        logging.debug('Creating instance of FileMethodClass, call instance.init to initializate')
+        pass
 
     def init(self, *args, **kwargs):
         logging.info('INIT:%s', self.__class__.__name__)
         # self.file_name = None
         # self.file_path = None
         # self.filedir = None
+
+    def from_file_return_list_by_line(self, targetfile):
+        try:
+            with open(targetfile, 'r') as f:
+                filelist = []
+                for line in f:
+                    filelist.append(line.rstrip('\n'))
+        except Exception as e:
+            logging.debugging('Unable to read file:%s', e)
+            return None
+        return filelist
+
+
+
 
     def str_if_none(self, *args):
         '''
@@ -97,24 +111,25 @@ class FileMethodClass:
         else:
             raise ValueError('file_found:', file_found)
 
-    def create_folder(self, folder_name=None, num=0):
-        logging.debug('folder_name: %s', folder_name)
-        init_name = 'output'
-        if folder_name is None:
-            init_name = 'output'
+    def create_folder(self, folder_dir=None, init_name='output', num=0):
+        logging.debug('Check folder_dir: %s', folder_dir)
+        if folder_dir is None:
+            logging.debug('folder_dir is None? %s', folder_dir)
             num = 0
-            folder_name = init_name + str(num)
+            folder_dir = init_name + str(num)
+            logging.debug('SET folder_dir to: %s', folder_dir)
 
         # Check if folder exists? do nothing:create it
-        if not os.path.isdir(folder_name):
-            os.makedirs(folder_name)
-            logging.info("Created: %s", folder_name)
-            return folder_name
+        if not os.path.isdir(folder_dir):
+            os.makedirs(folder_dir)
+            logging.info("Created: %s", folder_dir)
+            return folder_dir
         else:
+            logging.info("Folder:%s exists", folder_dir)
             num = num + 1
-            folder_name = init_name + str(num)
-            logging.info("Folder:%s exists", folder_name)
-            return self.create_folder(folder_name, num)
+            folder_dir = folder_dir + init_name + str(num)
+            logging.info("SET folder_dir to: %s", folder_dir)
+            return self.create_folder(folder_dir, init_name, num)
 
 if __name__ == "__main__":
     fmobj = FileMethodClass()
