@@ -50,39 +50,61 @@ class sevenZMethodClassLearn:
         self.fw.init()
     def extract_files_to_folder(self, pfilelist, ptarget7z, ptargetfolder, puse_basename=True):
         # Read and create another folder
+        logging.debug('PRINT pfilelist:%s', pfilelist)
+        pfilelist_basename = pfilelist.copy()
+        #
+        # try:
+        with open(ptarget7z, 'rb') as ptarget7Zfp:
+            if not self.fm.chk_file_dir(filedir=ptargetfolder):
+                self.fm.create_folder(folder_dir=ptargetfolder)
 
-        try:
-            with open(ptarget7z, 'rb') as ptarget7Zfp:
-                if not self.fm.chk_file_dir(filedir=ptargetfolder):
-                    self.fm.create_folder(folder_dir=ptargetfolder)
+            ptarget7z_archive = py7zlib.Archive7z(ptarget7Zfp)
+            pgetnames = ptarget7z_archive.getnames()
+            # getnames run in alphabetical order regardless of folder or files
 
-                ptarget7z_archive = py7zlib.Archive7z(ptarget7Zfp)
-                pallnames = ptarget7z_archive.getnames()
-                # getnames run in alphabetical order regardless of folder or files
+            # return pfound for files that has been found
+            pfound = []
+            for pgetname_index, pgetname in enumerate(pgetnames):
 
-                # return pfound_list for files that has been found
-                pfound_list = []
-                for pindex, pname in enumerate(pallnames):
-                    psearchname = pname
-                    if puse_basename:
-                        pbasename = os.path.basename(pname)
-                        psearchname = pbasename
-                    if psearchname in pfilelist:
+                if puse_basename:
+                    # As long as basename in pgetnames & pfilelist matches
+                    pgetname_basename = os.path.basename(pgetname)
+                    psearchname = pgetname_basename
+                    psearchlist = pfilelist_basename
+                else:
+                    psearchname = pgetname
+                    psearchlist = pfilelist
 
-                        logging.debug('\npname[%s]:%s pbasename:%s psearchname:%s', pindex, pname, pbasename, psearchname)
-                        logging.debug('pallnames[pindex]:%s', pallnames[pindex])
-                        pmember = ptarget7z_archive.getmember(pallnames[pindex])
-                        pdata = pmember.read()
-                        pwrite_path = os.path.join(ptargetfolder, psearchname)
+                if psearchname in psearchlist:
+                    # Find the index out so we can write similar structure as pfilelist
+                    logging.debug('psearchname:%s ', psearchname)
+                    logging.debug('Getting member:%s', pgetnames[pgetname_index])
+                    pmember = ptarget7z_archive.getmember(pgetnames[pgetname_index])
+                    pdata = pmember.read()
 
-                        with open(pwrite_path, "wb") as filewrite:
-                            logging.debug("Write data to:%s", pwrite_path)
-                            pfound_list.append(pwrite_path)
-                            filewrite.write(pdata)
+                    pwrite_path = os.path.join(ptargetfolder, pfilelist[pfilelist.index(psearchname)])
 
-                return pfound_list
-        except IOError as e:
-            logging.debug("Cannot open 7z file:%s", e)
+                    # in case someone make mistake writing / at files_to_extract
+                    pwrite_path = pwrite_path.replace('/', '\\')
+                    logging.debug('pwrite_path dir name:%s', os.path.dirname(pwrite_path))
+                    # if write to folder?
+                    # puse_basenameuse use pfilelist as location:
+                    #
+                    # pfilelist_basename_index = psearchlist.index(psearchname)
+                    # pwrite_path = os.path.join(ptargetfolder, pfilelist[pfilelist_basename_index])
+                    # logging.debug('PRINT pfilelist[index]:%s path:%s', pfilelist[pfilelist_basename_index],
+                    #               pwrite_path)
+                    # pwrite_path = pwrite_path.replace(os.sep, '/')
+
+                    self.fm.create_folder(folder_dir=os.path.dirname(pwrite_path))
+                    with open(pwrite_path, "wb+") as filewrite:
+                        logging.debug("Write data to:%s", pwrite_path)
+                        pfound.append(pwrite_path)
+                        filewrite.write(pdata)
+
+            return pfound
+        # except IOError as e:
+        #     logging.debug("Cannot open 7z file:%s", e)
 
 
 if __name__ == "__main__":
@@ -94,10 +116,11 @@ if __name__ == "__main__":
 
     filelist_to_extract = r'C:\automation_testfiles_2\files_to_extract.txt'
     filelist = test7z.fm.from_file_return_list_by_line(filelist_to_extract)
-
-    test7z.extract_files_to_folder(pfilelist=filelist, ptarget7z=target7z, ptargetfolder=targetfolder)
+    test7z.fm.delete_folder_if_exists(folder_dir=targetfolder)
+    test7z.fm.create_folder(folder_dir=targetfolder)
+    test7z.extract_files_to_folder(pfilelist=filelist, ptarget7z=target7z, ptargetfolder=targetfolder, puse_basename=False)
     test7z.fw.fwdata['info']['fw_version'] = '_A0032Q3N'
-    test7z.fw.add_name_behind_filename(ptargetdir=targetfolder, prename=test7z.fw.fwdata['info']['fw_version'])
+    test7z.fm.add_name_behind_filename(ptargetdir=targetfolder, prename=test7z.fw.fwdata['info']['fw_version'])
 
 
 

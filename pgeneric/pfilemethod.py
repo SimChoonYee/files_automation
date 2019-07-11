@@ -2,9 +2,9 @@
 # import re
 from pgeneric.pimport_module import *
 
-
 class FileMethodClass:
     def __init__(self):
+
         pass
 
     def init(self, *args, **kwargs):
@@ -13,19 +13,56 @@ class FileMethodClass:
         # self.file_path = None
         # self.filedir = None
 
-    def from_file_return_list_by_line(self, targetfile):
+    def from_file_return_list_by_line(self, targetfile, pnumskipnewline=0):
+        '''
+
+        :param targetfile:
+        :param pnumskipnewline: init:0, turns of continue reading if newline found
+        :return: a list if file readable
+        '''
         try:
             with open(targetfile, 'r') as f:
                 filelist = []
                 for line in f:
-                    filelist.append(line.rstrip('\n'))
+                    line = line.rstrip('\n')
+                    if line == r'' and pnumskipnewline == 0:
+                        logging.debug('Reached emptyquotes, STOP READ:%s', targetfile)
+                        break
+                    elif line == r'':
+                        pnumskipnewline = pnumskipnewline - 1
+                        logging.debug('Read emptyquotes, emptyquotes left to be skipped:%s', str(pnumskipnewline))
+                        continue
+                    filelist.append(line)
         except Exception as e:
             logging.debugging('Unable to read file:%s', e)
             return None
         return filelist
 
+    def add_name_behind_filename(self, ptargetdir, prename=""):
+        if not os.path.isdir(ptargetdir):
+            logging.warning("Directory not exists")
+            return None
+        # else:
+        #     # Delete all files in dir if directory exists
+        #     if os.listdir(ptargetdir):
+        #         for
+
+        new_filepathlist = []
+        for dirpath, dirnames, filenamelist in os.walk(ptargetdir):
+            for filename in filenamelist:
+                # https://stackoverflow.com/questions/45493022/rename-files-without-extension
+                old_filepath, ext = os.path.splitext(os.path.join(dirpath, filename))
+                if not ext:
+                    logging.warning("This file %s has no ext, renaming it might be wrong", old_filepath)
+
+                new_filepath = old_filepath + prename
 
 
+
+                if os.rename(old_filepath+ext, new_filepath+ext):
+                    new_filepathlist.append(new_filepath+ext)
+
+        return new_filepathlist
 
     def str_if_none(self, *args):
         '''
@@ -111,8 +148,28 @@ class FileMethodClass:
         else:
             raise ValueError('file_found:', file_found)
 
-    def create_folder(self, folder_dir=None, init_name='output', num=0):
-        logging.debug('Check folder_dir: %s', folder_dir)
+    def delete_folder_if_exists(self, folder_dir=None):
+        logging.info('DEL:%s', folder_dir)
+        if os.path.isdir(folder_dir):
+            send2trash.send2trash(folder_dir)
+            return 1
+        else:
+            logging.info('Folder:%s does not exists for deletion', folder_dir)
+            return None
+
+    def create_folder(self, folder_dir):
+        logging.debug('CHECK IF EXISTS: %s', folder_dir)
+        # Check if folder do not exists? Create it: Do nothing
+        if not os.path.isdir(folder_dir):
+            os.makedirs(folder_dir)
+            logging.info("Folder Missing, CREATE: %s \n", folder_dir)
+            return folder_dir
+        else:
+            logging.info("EXISTS, NO-CREATE:%s \n", folder_dir)
+            return None
+
+    def create_folder_incrementally(self, folder_dir=None, init_name='output', num=0):
+        logging.debug('CHECK: %s', folder_dir)
         if folder_dir is None:
             logging.debug('folder_dir is None? %s', folder_dir)
             num = 0
@@ -122,7 +179,7 @@ class FileMethodClass:
         # Check if folder exists? do nothing:create it
         if not os.path.isdir(folder_dir):
             os.makedirs(folder_dir)
-            logging.info("Created: %s", folder_dir)
+            logging.info("Folder Missing, CREATE: %s", folder_dir)
             return folder_dir
         else:
             logging.info("Folder:%s exists", folder_dir)
@@ -131,6 +188,13 @@ class FileMethodClass:
             logging.info("SET folder_dir to: %s", folder_dir)
             return self.create_folder(folder_dir, init_name, num)
 
+    # Write
+    def write_bytes_to_folder(self):
+        pass
+
+
 if __name__ == "__main__":
     fmobj = FileMethodClass()
-    fmobj.create_folder()
+    testfile = r'C:\automation_testfiles_2\files_to_extract.txt'
+    testlist = fmobj.from_file_return_list_by_line(targetfile=testfile, pnumskipnewline=1)
+    print(testlist)

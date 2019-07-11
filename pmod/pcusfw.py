@@ -27,24 +27,7 @@ class FwClass:
         for key in self.fwdata:
             self.fwdata[key] = data
 
-    def add_name_behind_filename(self, ptargetdir, prename=""):
-        if not os.path.isdir(ptargetdir):
-            logging.warning("Directory not exists")
-            return None
 
-        new_filepathlist = []
-        for dirpath, dirnames, filenamelist in os.walk(ptargetdir):
-            for filename in filenamelist:
-                # https://stackoverflow.com/questions/45493022/rename-files-without-extension
-                old_filepath, ext = os.path.splitext(os.path.join(dirpath, filename))
-                if not ext:
-                    logging.warning("This file %s has no ext, renaming it might be wrong", old_filepath)
-
-                new_filepath = old_filepath + prename
-                if os.rename(old_filepath+ext, new_filepath+ext):
-                    new_filepathlist.append(new_filepath+ext)
-
-        return new_filepathlist
 
 
 if __name__ == "__main__":
